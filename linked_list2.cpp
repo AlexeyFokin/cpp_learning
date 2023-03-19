@@ -15,7 +15,10 @@ class LinkedList
 		}
 
 		// inserts a node in front of all other nodes in LinkedList
-		void insertFront(int data);
+		Node* insertFront(int data);
+
+		// upon given node gives next node in LinkedList
+		Node* next(Node* node);
 
 		// deletes first node in a LinedList
 		void deleteFront();
@@ -23,16 +26,24 @@ class LinkedList
 		// prints all nodes in LinkedList starting form node
 		void display();
 
+		// checks is LinkedList have loop inside
+		bool isLooped();
+
 	private:
 		Node* head;
 };
 
-void LinkedList::insertFront(int data) {
+Node* LinkedList::insertFront(int data) {
 	Node* newNode = new Node();
 
 	newNode->data = data;
 	newNode->next = head;
 	head = newNode;
+	return newNode;
+}
+
+Node* LinkedList::next(Node* node) {
+	return node->next;
 }
 
 void LinkedList::deleteFront() {
@@ -45,9 +56,6 @@ void LinkedList::deleteFront() {
 }
 
 void LinkedList::display() {
-	// if(head == NULL) {
-	// 	return;
-	// }
 	Node* currentNode = head;
 	
 	while (currentNode != NULL) {
@@ -56,19 +64,46 @@ void LinkedList::display() {
 	}
 }
 
+// to find loop in LinkedList we use two running pointers with different speed
+// if after number of steps two pointers will point to same Node - list has loop
+bool LinkedList::isLooped() {
+	Node* first;
+	Node* second;
+
+	first = head;
+	second = head;
+
+	if(head == NULL) return false;	// empty LinkedList - no loop
+
+	while(first->next != NULL) {
+		first = first->next;
+
+		if(second->next == NULL) return false;
+		second = second->next;
+		if(second->next == NULL) return false;
+		second = second->next;
+
+		if(first == second) return true;
+	}
+	return false;
+}
+
 int main()
 {
 	LinkedList* linked_list = new LinkedList();
 
-	linked_list->insertFront(25);
+	auto endNode = linked_list->insertFront(25);
 	linked_list->insertFront(2);
 	linked_list->insertFront(325);
 	linked_list->insertFront(23335);
-	linked_list->insertFront(2235);
+	auto firstNode = linked_list->insertFront(2235);
+	//endNode->next = firstNode;
 
 	linked_list->display();
-	linked_list->deleteFront();
+	// linked_list->deleteFront();
 
-	linked_list->display();
+	// linked_list->display();
 
+	bool isLoop = linked_list->isLooped();
+	std::cout << "is looped? " << isLoop << std::endl;
 }
